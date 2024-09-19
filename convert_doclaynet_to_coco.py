@@ -38,6 +38,9 @@ def create_dataset(json_path, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR):
             annotations_by_image[image_id] = [] 
             
         annotations_by_image[image_id].append(ann)
+    
+    # Remove image_id keys with empty lists
+    annotations_by_image = {k: v for k, v in annotations_by_image.items() if v}
         
     for image in json_data['images']: 
         # Normalizing the Coordinates 
