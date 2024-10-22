@@ -1,0 +1,17 @@
+path: COCO # dataset root dir
+train: images/train2017 # train images (relative to 'path') 128 images
+val: images/train2017 # val images (relative to 'path') 128 images
+
+# Classes
+names:
+  0: Caption
+  1: Footnote
+  2: Formula
+  3: List-item
+  4: Page-footer
+  5: Page-header
+  6: Picture
+  7: Section-header
+  8: Table
+  9: Text
+  10: Title
