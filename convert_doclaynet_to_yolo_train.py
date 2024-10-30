@@ -3,7 +3,7 @@ import json
 import shutil
 import os 
 
-error_log = open("error.txt", 'a+')
+
 def read_json(json_path:str): 
     with open(json_path, 'r') as fp: 
         json_data= json.load(fp)
@@ -30,46 +30,45 @@ def create_dataset(json_path, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR):
     json_data = read_json(json_path)
     
     class_mapping = {i+1:i  for i in range(11)}  
-    # Preprocess annotations into a dictionary keyed by image_id       
+    # Preprocess annotations into a dictionary keyed by image_id
     annotations_by_image = {}
     for ann in json_data['annotations']:
         image_id = ann['image_id']
-        if image_id not in annotations_by_image:
+        if image_id not in annotations_by_image.keys():
             annotations_by_image[image_id] = [] 
             
         annotations_by_image[image_id].append(ann)
     
-        
-    for idx, image in enumerate(json_data['images']): 
+    for image in json_data['images']: 
         # Normalizing the Coordinates 
         try: 
             anns = annotations_by_image[image['id']] # Get all the annotations  of the image 
         except KeyError: 
-            # KeyError occurs when there is no Key which means there is no annotations for that image so skip those s
-            error_log.write(str(image['id']))
-            error_log.write('\n')
+            print(f"No Annotations for the:{image['file_name']} ")
             continue
         file_name = image['file_name']
         img_w = image['width']
         img_h = image['height']
-        print(f"{len(json_data['images'])-idx} images remaining")
-        with open(f"{OUTPUT_LABELS_DIR}/{file_name.split('.png')[0]}.txt",'w') as fp: 
+        image_types = ['.png', '.jpg']
+
+        # Find the first matching type in the filename; default to 'jpg' if none are found
+        split_text = next((ext for ext in image_types if ext in file_name.lower()), 'jpg')
+        with open(f"{OUTPUT_LABELS_DIR}/{file_name.split(split_text)[0]}.txt",'w') as fp: 
             for ann in anns: 
+                cat_id = ann['category_id']
                 cat_id = ann['category_id']
                 new_cat_id = class_mapping[cat_id]
                 bbox_yolo = normalize_bbox(ann, img_w, img_h)
                 fp.write(f"{new_cat_id} {bbox_yolo[0]:0.6f} {bbox_yolo[1]:0.6f} {bbox_yolo[2]:0.6f} {bbox_yolo[3]:0.6f}") 
                 fp.write("\n")
-        shutil.copy(os.path.join(IMG_DIR,f"{file_name}"), OUTPUT_IMAGES_DIR )
+        shutil.copy(os.path.join(IMG_DIR,f"{file_name}"), OUTPUT_IMAGES_DIR ) 
         
-    
 if __name__ == "__main__": 
     data_type = "val"
-    doclaynet_dir = "data_doclaynet" # Dir containing doclaynet documents 
-    JSON_DIR = doclaynet_dir+ f"/COCO/{data_type}.json"
+    doclaynet_dir = "/home/ubuntu/yolov5/downloads/datasets/data_doclaynet" # Dir containing doclaynet documents 
+    JSON_DIR = doclaynet_dir+ f"/COCO/{data_type}.json" # using train.json of annotations as test data
     IMG_DIR = os.path.join(doclaynet_dir, "PNG")
     OUTPUT_DIR =f"COCO"
-    
 
     os.makedirs(OUTPUT_DIR, exist_ok=True) 
     os.makedirs(OUTPUT_DIR+ "/images",exist_ok=True)
@@ -78,6 +77,6 @@ if __name__ == "__main__":
     os.makedirs(OUTPUT_DIR+"/labels/"+ f"{data_type}2017",exist_ok=True)
     OUTPUT_LABELS_DIR = OUTPUT_DIR+"/labels/"+ f"{data_type}2017"
     OUTPUT_IMAGES_DIR = OUTPUT_DIR+"/images/"+ f"{data_type}2017"
+    
     create_dataset(JSON_DIR, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR)
     print("All Conversion Completed")
-    error_log.close()
