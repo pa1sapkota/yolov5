@@ -14,7 +14,8 @@ To configure the prediction settings, update the relevant fields in `configs.yam
 
 ## Running Predictions
 
-Once the configuration is complete, you can generate predictions by running the following command:
+After configuring the environment, you can generate predictions by executing the following command from the YOLOv5 base directory:
 
 ```bash
 python -m predict.demo
+```
