@@ -1,13 +1,20 @@
-# Running the Prediction
+# Prediction Guide
 
-The Output from the prediction are in the following structure 
-![alt text](resources/structure_output.png) 
+This guide outlines the steps for configuring and running predictions in this project.
 
-## Change the values in the configs.yaml 
-The following values need to be changed in the config file 
-![image text](resources/configs.png)  
+## Output Structure
 
-After changing the values on the configs.yaml in the predict directory the predictions can be generated using the following commands 
-```bash 
+After running the prediction script, the output will follow this structure:
+![Prediction Output Structure](assets/structure_output.png)
+
+## Configuring Parameters
+
+To configure the prediction settings, update the relevant fields in `configs.yaml` located in the `predict` directory. Here is an example of the fields to be updated:
+![Configurations in configs.yaml](assets/configs.png)
+
+## Running Predictions
+
+Once the configuration is complete, you can generate predictions by running the following command:
+
+```bash
 python -m predict.demo
-```
