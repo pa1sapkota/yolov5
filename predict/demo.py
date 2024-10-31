@@ -66,7 +66,7 @@ def run_detection(img_file):
         "--source", img_file,
         "--project", output_dir,
         "--name", experiment_name,  
-        # "--exist-ok",  
+        "--exist-ok",  
         "--save-txt",
         '--conf-thres', str(conf),
         "--save-conf"
@@ -132,6 +132,7 @@ for image in images_full_path:
             if config['visualization']: 
                 img = cv2.imread(image)
                 post_process_img = visualize_prediction(post_process_json, img, raw=False) 
-                cv2.imwrite(f"{output_dir}/{experiment_name}/{img_name}.jpg", post_process_img)
+                os.makedirs(f"{output_dir}/{experiment_name}/post_process_img", exist_ok=True)
+                cv2.imwrite(f"{output_dir}/{experiment_name}/post_process_img/{img_name}.jpg", post_process_img)
                 print(f"Image: {img_name} processed successfully")
         
