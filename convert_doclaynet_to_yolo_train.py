@@ -30,6 +30,7 @@ def create_dataset(json_path, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR):
     json_data = read_json(json_path)
     
     class_mapping = {i+1:i  for i in range(11)}  
+    
     # Preprocess annotations into a dictionary keyed by image_id
     annotations_by_image = {}
     for ann in json_data['annotations']:
@@ -40,13 +41,18 @@ def create_dataset(json_path, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR):
         annotations_by_image[image_id].append(ann)
     
     for image in json_data['images']: 
+        file_name = image['file_name']
+        print(f"Processing {file_name}")
         # Normalizing the Coordinates 
         try: 
             anns = annotations_by_image[image['id']] # Get all the annotations  of the image 
-        except KeyError: 
-            print(f"No Annotations for the:{image['file_name']} ")
+        except KeyError:  
+            # There is no annotations for this image so we save those image and add a empty text file 
+            shutil.copy(os.path.join(IMG_DIR,f"{file_name}"), OUTPUT_IMAGES_DIR ) 
+            with open(f"{OUTPUT_LABELS_DIR}/{file_name.split(split_text)[0]}.txt",'w') as fp:
+                fp.write("") # write empty file -> No annotations 
             continue
-        file_name = image['file_name']
+        
         img_w = image['width']
         img_h = image['height']
         image_types = ['.png', '.jpg']
@@ -65,7 +71,7 @@ def create_dataset(json_path, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR):
         
 if __name__ == "__main__": 
     data_type = "val"
-    doclaynet_dir = "/home/ubuntu/yolov5/downloads/datasets/data_doclaynet" # Dir containing doclaynet documents 
+    doclaynet_dir = "/mnt/c/Users/FM-PC-LT-356/Documents/doclaynet_experiment/data/processed/Doclaynet_Non_Financial_Legal" # Dir containing doclaynet documents 
     JSON_DIR = doclaynet_dir+ f"/COCO/{data_type}.json" # using train.json of annotations as test data
     IMG_DIR = os.path.join(doclaynet_dir, "PNG")
     OUTPUT_DIR =f"COCO"
