@@ -11,8 +11,7 @@ def read_json(json_path:str):
         
         
 def normalize_bbox(ann, img_w, img_h):
-    x, y, w, h = ann['bbox']  # x, y are top-left corner coordinates
-    # Calculate center of the bounding box
+    x, y, w, h = ann['bbox'] 
     x_center = x + w / 2
     y_center = y + h / 2
     
@@ -28,7 +27,6 @@ def normalize_bbox(ann, img_w, img_h):
 
 def create_dataset(json_path, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR): 
     json_data = read_json(json_path)
-    
     class_mapping = {i+1:i  for i in range(11)}  
     
     # Preprocess annotations into a dictionary keyed by image_id
@@ -71,7 +69,7 @@ def create_dataset(json_path, IMG_DIR, OUTPUT_LABELS_DIR, OUTPUT_IMAGES_DIR):
         
 if __name__ == "__main__": 
     data_type = "val"
-    doclaynet_dir = "/mnt/c/Users/FM-PC-LT-356/Documents/doclaynet_experiment/data/processed/Doclaynet_Non_Financial_Legal" # Dir containing doclaynet documents 
+    doclaynet_dir = "" # Dir containing doclaynet documents 
     JSON_DIR = doclaynet_dir+ f"/COCO/{data_type}.json" # using train.json of annotations as test data
     IMG_DIR = os.path.join(doclaynet_dir, "PNG")
     OUTPUT_DIR =f"COCO"
